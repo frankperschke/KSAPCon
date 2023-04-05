@@ -40,7 +40,7 @@ namespace KSAPCon {
         #region Methods
 
         /// <summary>
-        /// Konfiguration´aus lesen
+        /// Konfiguration des Beleg auslesen
         /// </summary>
         /// <param name="beleg"></param>
         /// <param name="belegnummer"></param>
@@ -126,6 +126,12 @@ namespace KSAPCon {
             return planversion;
         }
 
+        /// <summary>
+        /// VBAP Tabelle aus SAp lesen
+        /// </summary>
+        /// <param name="vbeln"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public DataTable VBAP(string vbeln, string pos) {
             try {
                 var repo = _con.Repository;
@@ -168,13 +174,51 @@ namespace KSAPCon {
             }
         }
 
+        /// <summary>
+        /// Vertriebsbeleg auslesen
+        /// </summary>
+        /// <param name="Belegsnummer"></param>
+        /// <param name="Belegsposition"></param>
+        /// <returns></returns>
         public vbel Vetriebsbeleg(string vbeln, string posnr) {
             var repo = _con.Repository;
             var fnc = repo.CreateFunction("Z_RFC_KOMNR_INFO");
 
             fnc.SetValue("VBELN", vbeln);
             fnc.SetValue("POSNR", posnr);
+            //  Suche.SetValue("KOMNR", komm);
+            fnc.Invoke(_con);
+            //work with response
+            var vb = new vbel();
 
+            vb.komm = fnc.GetString("OKOMNR");
+            vb.vbeln = fnc.GetString("OVBELN");
+            vb.posnr = fnc.GetString("OPOSNR");
+            vb.deb_no = fnc.GetString("AUFTRAGGEBER");
+            vb.deb_txt = fnc.GetString("AUFTRAGGEBERTXT");
+            vb.rec_no = fnc.GetString("WARENEMP");
+            vb.rec_txt = fnc.GetString("WARENEMPTXT");
+            vb.laneNo = fnc.GetString("ZZ_ANLAGE");
+            vb.netplan = fnc.GetString("OAUFNR");
+            vb.model = fnc.GetString("ZZ_MATMOD");
+            vb.modellarge = fnc.GetString("ARKTX");
+            vb.typ = fnc.GetString("ZZ_EQUIART");
+            vb.typ1 = fnc.GetString("EARTX");
+            vb.info = fnc.GetString("BO_VBAP_INFO");
+
+            return vb;
+        }
+
+        /// <summary>
+        /// Vertriebsbeleg auslesen
+        /// </summary>
+        /// <param name="kommNo">Kommisionsnummer</param>
+        /// <returns></returns>
+        public vbel Vetriebsbeleg(string kommNo) {
+            var repo = _con.Repository;
+            var fnc = repo.CreateFunction("Z_RFC_KOMNR_INFO");
+
+            fnc.SetValue("KOMNR", kommNo);
             fnc.Invoke(_con);
             //work with response
             var vb = new vbel();
