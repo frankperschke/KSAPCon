@@ -127,7 +127,7 @@ namespace KSAPCon {
         }
 
         /// <summary>
-        /// VBAP Tabelle aus SAp lesen
+        /// VBAP Tabelle aus SAP lesen
         /// </summary>
         /// <param name="vbeln"></param>
         /// <param name="pos"></param>
